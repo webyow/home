@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webyow - We Build Your World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3314/3314461.png">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #e6f7ff);
+            color: #1a1a1a;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(173, 216, 230, 0.3);
+            pointer-events: none;
+            animation: floatAround 40s linear infinite;
+        }
+
+        @keyframes floatAround {
+            0% {
+                transform: translate(0, 0) scale(0.8);
+                opacity: 0.3;
+            }
+
+            25% {
+                transform: translate(30vw, -20vh) scale(1);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: translate(-20vw, -30vh) scale(1.2);
+                opacity: 0.3;
+            }
+
+            75% {
+                transform: translate(15vw, -50vh) scale(0.9);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: translate(-10vw, -80vh) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .glass:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .scroll-effect {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .scroll-effect.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .neon-text {
+            color: #222222;
+            text-shadow:
+                0 0 2px #0ff,
+                0 0 4px #0ff,
+                0 0 6px #0ff;
+        }
+
+        .floating-3d {
+            perspective: 1000px;
+        }
+
+        .floating-3d:hover {
+            transform: rotateX(15deg) rotateY(15deg);
+        }
+
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.6;
+            animation: moveBlob 15s infinite alternate ease-in-out;
+
+        }
+
+        .blob-left {
+            top: -28vh;
+            left: 10%;
+            animation-delay: -5s;
+        }
+
+        .blob-right {
+            top: 50%;
+            right: 10%;
+            animation-delay: -2s;
+        }
+
+        @keyframes moveBlob {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(100px, 200px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated SVG Divider -->
+     <!-- rebuild trigger -->
+
+    <svg class="w-full" viewBox="0 0 1440 320">
+        <path fill="#f0f8ff" fill-opacity="1"
+            d="M0,96L48,112C96,128,192,160,288,149.3C384,139,480,85,576,85.3C672,85,768,139,864,170.7C960,203,1056,213,1152,192C1248,171,1344,117,1392,90.7L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z">
+        </path>
+    </svg>
+    <!-- Bubble Background Layer -->
+    <div id="bubbles-container" class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden"></div>
+
+    <!-- Hero Section with 3D Background Blobs -->
+    <section style="height: 65vh;" class="section relative flex flex-col justify-center items-center text-center px-6">
+        <div class="blob blob-left"></div>
+        <div class="blob blob-right"></div>
+        <div style="margin-top: -30%;" class="z-10">
+            <img src="https://cdn-icons-png.flaticon.com/512/3314/3314461.png" alt="Webyow Logo"
+                class="w-24 h-24 mb-6 animate__animated animate__bounceInDown">
+            <h1
+                class="text-6xl sm:text-7xl font-extrabold leading-tight mb-4 neon-text animate__animated animate__fadeInUp">
+                We Build Your World</h1>
+            <p
+                class="text-lg sm:text-xl text-gray-700 max-w-2xl mb-6 animate__animated animate__fadeInUp animate__delay-1s">
+                No clients. No compromise. Just pure product innovation from imagination to execution. Webyow builds
+                what matters.
+            </p>
+            <a href="#services"
+                class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-3 rounded-full text-lg font-bold hover:scale-105 transition transform duration-300 animate__animated animate__zoomIn animate__delay-2s">
+                Explore Our Vision
+            </a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section px-6 text-center bg-blue-50">
+        <h2 class="text-4xl font-bold mb-12 neon-text scroll-effect">Our Focus Areas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+            <div class="glass p-8 scroll-effect floating-3d">
+                <img src="https://cdn-icons-png.flaticon.com/512/1048/1048953.png" class="w-20 mx-auto mb-4"
+                    alt="Product Icon">
+                <h3 class="font-semibold text-2xl mb-2">SaaS Products</h3>
+                <p class="text-gray-800">We design and own our tools — modern, minimal, cloud-native applications
+                    for
+                    real-world use.</p>
+            </div>
+            <div class="glass p-8 scroll-effect floating-3d">
+                <img src="https://cdn-icons-png.flaticon.com/512/1048/1048937.png" class="w-20 mx-auto mb-4"
+                    alt="Design Icon">
+                <h3 class="font-semibold text-2xl mb-2">Intuitive UX/UI</h3>
+                <p class="text-gray-800">Interfaces that feel like magic. Every click and flow designed for joy and
+                    productivity.</p>
+            </div>
+            <div class="glass p-8 scroll-effect floating-3d">
+                <img src="https://cdn-icons-png.flaticon.com/512/1048/1048983.png" class="w-20 mx-auto mb-4"
+                    alt="AI Icon">
+                <h3 class="font-semibold text-2xl mb-2">Smart Systems</h3>
+                <p class="text-gray-800">Our products adapt, learn, and evolve using intelligent logic and
+                    predictive
+                    capabilities.</p>
+            </div>
+        </div>
+    </section>
+    <!-- About Section -->
+    <!-- existing code above remains unchanged -->
+
+    <!-- About Section -->
+    <section id="about" class="section px-6 text-center bg-white relative overflow-hidden">
+        <h2 class="text-4xl font-bold mb-8 neon-text scroll-effect">Who We Are</h2>
+        <div class="max-w-4xl mx-auto text-lg text-gray-700 scroll-effect">
+            <p class="mb-4">
+                Webyow is a product-first company. We don't build for clients — we build for the future. We're a
+                crew of
+                engineers,
+                designers, and thinkers who create things we ourselves love to use.
+            </p>
+            <p>
+                Our mission is to innovate from scratch. No reuse. No shortcuts. Just creativity, engineering, and
+                execution.
+            </p>
+        </div>
+        <!-- Floating toys -->
+        <div class="absolute top-10 left-10 w-16 h-16 animate-bounce">
+            <img src="https://cdn-icons-png.flaticon.com/512/3275/3275967.png" alt="Toy 1" />
+        </div>
+        <div class="absolute bottom-10 right-10 w-20 h-20 animate-spin-slow">
+            <img src="https://cdn-icons-png.flaticon.com/512/1034/1034128.png" alt="Toy 2" />
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section px-6 bg-blue-50 text-center">
+        <h2 class="text-4xl font-bold mb-8 neon-text scroll-effect">Upcoming Projects</h2>
+        <p class="text-lg text-gray-700 mb-12 max-w-3xl mx-auto scroll-effect">
+            Our first flagship product is almost here — bold, fast, beautiful. Launching soon 🚀
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="glass p-4 scroll-effect">
+                <img src="https://cdn-icons-png.flaticon.com/512/2840/2840207.png" alt="Coming Soon"
+                    class="w-24 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">Project Nova</h3>
+                <p class="text-gray-700">A new generation of smart productivity tools designed to empower digital
+                    creators.</p>
+            </div>
+            <div class="glass p-4 scroll-effect">
+                <img src="https://cdn-icons-png.flaticon.com/512/2038/2038729.png" alt="Coming Soon"
+                    class="w-24 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">VisionFlow</h3>
+                <p class="text-gray-700">A beautiful visual platform to brainstorm, organize, and execute ideas
+                    collaboratively.</p>
+            </div>
+            <div class="glass p-4 scroll-effect">
+                <img src="https://cdn-icons-png.flaticon.com/512/1534/1534159.png" alt="Coming Soon"
+                    class="w-24 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">MetaDash</h3>
+                <p class="text-gray-700">Dashboard reinvented. Blazing fast analytics and decision-making from every
+                    pixel.</p>
+            </div>
+        </div>
+    </section>
+    <section id="testimonials" class="section bg-white text-center px-6 relative overflow-hidden">
+        <h2 class="text-4xl font-bold mb-12 neon-text scroll-effect">Voices That Matter</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+            <div class="glass p-6 scroll-effect animate__animated animate__fadeInLeft animate__delay-1s">
+                <img src="https://cdn-icons-png.flaticon.com/512/2922/2922506.png" alt="Avatar"
+                    class="w-16 h-16 mx-auto rounded-full mb-4 shadow-lg">
+                <p class="italic text-gray-700 mb-2">"Webyow is unlike any team we've seen — creativity and
+                    engineering
+                    in perfect sync."</p>
+                <h4 class="font-bold text-lg">Anika Sharma</h4>
+                <p class="text-sm text-gray-500">Product Analyst</p>
+            </div>
+            <div class="glass p-6 scroll-effect animate__animated animate__fadeInRight animate__delay-1s">
+                <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png" alt="Avatar"
+                    class="w-16 h-16 mx-auto rounded-full mb-4 shadow-lg">
+                <p class="italic text-gray-700 mb-2">"Everything about the experience — from design to code — felt
+                    premium and personal."</p>
+                <h4 class="font-bold text-lg">David Lee</h4>
+                <p class="text-sm text-gray-500">UX Researcher</p>
+            </div>
+        </div>
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0 animate__animated animate__fadeIn">
+            <img src="https://www.transparenttextures.com/patterns/stardust.png"
+                class="w-full h-full object-cover opacity-10" alt="Stars Texture">
+        </div>
+    </section>
+
+    <!-- Careers Section -->
+    <section id="careers" class="section px-6 text-center bg-blue-100 relative">
+        <h2 class="text-4xl font-bold mb-6 neon-text scroll-effect">Join Our Crew</h2>
+        <p class="text-gray-700 text-lg max-w-2xl mx-auto mb-8 scroll-effect">Webyow is a creative playground for
+            coders, dreamers, and builders. We give full freedom to ship amazing software.</p>
+        <a href="mailto:webyowtech@gmail.com"
+            class="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-8 py-3 rounded-full text-lg font-bold hover:scale-105 transition transform duration-300 scroll-effect">Send
+            Your CV</a>
+        <div class="absolute -top-10 -right-10 w-48 h-48 bg-blue-300 rounded-full opacity-20 blur-2xl animate-pulse">
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section px-6 text-center bg-white">
+        <h2 class="text-4xl font-bold mb-6 neon-text scroll-effect">Let’s Connect</h2>
+        <p class="text-gray-700 text-lg mb-4 scroll-effect">Got an idea or want to invest? We’re just a click away.
+        </p>
+        <div class="flex justify-center space-x-8 mt-4 scroll-effect">
+            <a href="mailto:webyowtech@gmail.com" class="text-blue-600 hover:text-blue-800 text-xl font-semibold">📧
+                Email Us</a>
+            <a href="https://wa.me/9500667884" class="text-green-600 hover:text-green-800 text-xl font-semibold">💬
+                WhatsApp</a>
+            <a href="#" class="text-gray-600 hover:text-black text-xl font-semibold">🌐 LinkedIn</a>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-100 text-center py-6 border-t border-gray-200 text-gray-600 relative">
+        <p class="text-lg font-semibold">© 2025 WebYow | All Rights Reserved</p>
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <img src="https://www.transparenttextures.com/patterns/asfalt-dark.png" class="w-full h-full opacity-5"
+                alt="">
+        </div>
+    </footer>
+    <!-- Bubble JS -->
+    <script>
+        const container = document.getElementById('bubbles-container');
+        const totalBubbles = 50;
+
+        for (let i = 0; i < totalBubbles; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = Math.random() * 60 + 40;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.top = `${Math.random() * 100}%`;
+            bubble.style.animationDelay = `${Math.random() * 10}s`;
+            bubble.style.animationDuration = `${30 + Math.random() * 20}s`;
+            container.appendChild(bubble);
+        }
+    </script>
+
+    <script>
+        // Intersection Observer for scroll effects
+        const scrollElements = document.querySelectorAll('.scroll-effect');
+        const observerOptions = {
+            root: null,
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        scrollElements.forEach(el => observer.observe(el));
+    </script>
+    <script>
+        // 3D Floating Effect
+        document.querySelectorAll('.floating-3d').forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                el.style.transform = `rotateX(${(y - 0.5) * 20}deg) rotateY(${(x - 0.5) * 20}deg)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        });
+
+        // Blob animation
+        // const blobs = document.querySelectorAll('.blob');
+        // blobs.forEach(blob => {
+        //     blob.style.top = `${Math.random() * 100}vh`;
+        //     blob.style.left = `${Math.random() * 100}vw`;
+        //     blob.style.animationDelay = `${Math.random() * 5}s`;
+        // });
+    </script>
+
+    <script>
+        // Particle Background Effect
+        const canvas = document.createElement('canvas');
+        canvas.className = 'absolute inset-0 z-0';
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 100;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createParticles() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 3 + 1,
+                    color: `rgba(255, 255, 255, ${Math.random()})`
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+        }
+
+        function animateParticles() {
+            drawParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            particles = [];
+            createParticles();
+        });
+
+        resizeCanvas();
+        createParticles();
+        animateParticles();
+    </script>
+    <script>
+        // Interactive Mouse Effects
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            document.querySelectorAll('.floating-3d').forEach(el => {
+                el.style.transform = `translate(${x * 0.01}px, ${y * 0.01}px)`;
+            });
+        });
+        document.addEventListener('mouseleave', () => {
+            document.querySelectorAll('.floating-3d').forEach(el => {
+                el.style.transform = 'translate(0, 0)';
+            });
+        });
+    </script>
+</body>
+</body>
+
+</html>
